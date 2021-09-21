@@ -23,6 +23,7 @@
     "class-methods-use-this": "off",
     "no-var": "off",
     "one-var": "off",
-    "arrow-body-style": "off"
+    "arrow-body-style": "off",
+    "no-inner-declarations": "off"
   }
 }

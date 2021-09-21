@@ -9,9 +9,9 @@ import { makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles({
     anchorLink: {
         textDecoration: 'none',
-        color: '#1976d2',
+        color: '#1DB954',
         '&:visited': {
-            color: '#1976d2'
+            color: '#1DB954'
         }
     }
 })
@@ -19,7 +19,15 @@ const useStyles = makeStyles({
 export default function ArtistCard (props) {
     const classes = useStyles();
     return (
-        <Card sx={{ width: 300, margin: '20px auto' }}>
+        <Card sx={
+            { 
+                width: 300, 
+                margin: '20px auto',
+                "@media (max-width: 690px)": {
+                    width: '250px'
+                  }
+            }
+        }>
         <CardMedia
             component="img"
             alt={props.alt}
