@@ -23,6 +23,7 @@ export default function Profile() {
     const localPlaylist = localStorage.getItem("Playlist");
 
     if (localPlaylist) {
+      console.log("local playlist", localPlaylist)
       return JSON.parse(localPlaylist);
     }
 
@@ -50,7 +51,10 @@ export default function Profile() {
 
   useEffect(() => {
     localStorage.setItem("Playlist", JSON.stringify(playlist));
+    console.log("use effect")
   });
+
+  console.log(playlist)
 
   function handleSearch(e) {
     e.preventDefault();
@@ -87,6 +91,7 @@ export default function Profile() {
         name: data.name,
         href: data.external_urls.spotify,
         contribuitors: data.artists.map((artist) => artist),
+        id: data.id
       },
     };
 
@@ -96,8 +101,9 @@ export default function Profile() {
   function showPlaylist() {
     setTracks(undefined);
     setArtists(undefined);
-    const myPlaylist = JSON.parse(localStorage.getItem("Playlist"));
-    setUserPlaylist(myPlaylist);
+    // const myPlaylist = JSON.parse(localStorage.getItem("Playlist"));
+    // console.log("myplaylist", myPlaylist)
+    setUserPlaylist(playlist);
     setToggle(false);
   }
 
@@ -123,6 +129,12 @@ export default function Profile() {
     setIsArtistBtnActive(false)
     setIsTrackBtnActive(false)
     setIsBothBtnActive(true)
+  }
+
+  function handleDelete(id) {
+    setPlaylist((prevState) => prevState.filter((song) => song.data.id !== id))
+    localStorage.setItem("Playlist", JSON.stringify(playlist));
+    console.log("playlsit handle", playlist)
   }
 
   const useStyles = makeStyles({
@@ -275,6 +287,7 @@ export default function Profile() {
             {artists.map((artist) => {
               return (
               <ArtistCard
+                key={artist.id}
                 title={artist.name}
                 img={artist.images[0]?.url ? artist.images[0].url : DefaultImg}
                 alt={artist.name}
@@ -294,6 +307,7 @@ export default function Profile() {
             {tracks.map((track) => {
             return (
               <SongCard
+                key={track.id}
                 title={track.name}
                 alt={track.album.name}
                 img={track.album.images[0].url}
@@ -316,12 +330,16 @@ export default function Profile() {
             {userPlaylist.map((item) => {
             return (
               <SongCard
+                key={item.data.id}
                 title={item.data.name}
                 alt={item.data.name}
                 img={item.data.image}
                 body={item.data.contribuitors[0].name}
                 hrefOne={item.data.href}
                 buttonOneCopy="Tocar música"
+                buttonTwoCopy="Deletar música"
+                onClick={() => handleDelete(item.data.id)}
+                type="button"
               />
             );
           })}

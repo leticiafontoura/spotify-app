@@ -27,7 +27,6 @@ export default function SongCard (props) {
             alt={props.alt}
             height="140"
             image={props.img}
-            hrefOne={props.href}
         />
         <CardContent>
             <Typography gutterBottom variant="h6" component="div" sx={{ width: 250, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
