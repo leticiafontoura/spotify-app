@@ -13,7 +13,7 @@ export default function Profile() {
   const [tempArtists, setTempArtists] = useState();
   const [tracks, setTracks] = useState();
   const [tempTracks, setTempTracks] = useState();
-  const [userPlaylist, setUserPlaylist] = useState();
+  const [shouldShowPlaylist, setShouldShowPlaylist] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [isArtistBtnActive, setIsArtistBtnActive] = useState(false);
@@ -39,11 +39,18 @@ export default function Profile() {
     },
   });
 
+
   useEffect(() => {
     async function getUserName() {
-      const response = await api.get(`/me`);
-      setUser(response.data.display_name);
-      setUserImg(response.data.images[0]?.url ? response.data.images[0].url : DefaultImg);
+      // const response = await api.get(`/me`);
+      const response = await fetch('https://api.spotify.com/v1/me', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }).then(res => res.json());
+      setUser(response.display_name);
+      setUserImg(response.images[0]?.url ? response.images[0].url : DefaultImg);
     }
 
     getUserName();
@@ -52,9 +59,9 @@ export default function Profile() {
   useEffect(() => {
     localStorage.setItem("Playlist", JSON.stringify(playlist));
     console.log("use effect")
-  });
+  }, [playlist]);
 
-  console.log(playlist)
+    console.log(playlist)
 
   function handleSearch(e) {
     e.preventDefault();
@@ -70,7 +77,7 @@ export default function Profile() {
         setTempTracks(response.data.tracks.items);
         setArtistOrTrack("");
       }
-      setUserPlaylist(undefined);
+      setShouldShowPlaylist(false);
       searchInput();
     } catch (error) {
       console.error(error)
@@ -101,9 +108,7 @@ export default function Profile() {
   function showPlaylist() {
     setTracks(undefined);
     setArtists(undefined);
-    // const myPlaylist = JSON.parse(localStorage.getItem("Playlist"));
-    // console.log("myplaylist", myPlaylist)
-    setUserPlaylist(playlist);
+    setShouldShowPlaylist(true);
     setToggle(false);
   }
 
@@ -133,8 +138,8 @@ export default function Profile() {
 
   function handleDelete(id) {
     setPlaylist((prevState) => prevState.filter((song) => song.data.id !== id))
-    localStorage.setItem("Playlist", JSON.stringify(playlist));
     console.log("playlsit handle", playlist)
+    //esse log aparece "desatualizado" pq antes de rerenderizar ele executa a funcao inteira
   }
 
   const useStyles = makeStyles({
@@ -324,10 +329,10 @@ export default function Profile() {
           </>
           }
 
-        {userPlaylist !== undefined &&
+        {shouldShowPlaylist &&
         <><h2><span className={classes.highlight}>///</span>Minha playlist</h2>
           <section className="playlist-section">
-            {userPlaylist.map((item) => {
+            {playlist.map((item) => {
             return (
               <SongCard
                 key={item.data.id}
